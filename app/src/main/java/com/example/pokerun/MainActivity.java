@@ -4,7 +4,6 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Context;
 import android.os.Bundle;
-import android.os.Handler;
 import android.os.Vibrator;
 import android.view.View;
 import android.widget.Toast;
@@ -24,7 +23,6 @@ public class MainActivity extends AppCompatActivity {
     private ShapeableImageView[] game_IMG_trainers;
     private ShapeableImageView[] game_IMG_lives;
     private ShapeableImageView[] game_IMG_players;
-    private View[] game_LLO_lanes;
 
     private GameManager gameManager;
 
@@ -46,113 +44,6 @@ public class MainActivity extends AppCompatActivity {
         startGame();
         initViews();
     }
-
-    private void initViews() {
-        game_FAB_right.setOnClickListener(view -> {
-            clickedRight();
-        });
-        game_FAB_left.setOnClickListener(view -> {
-            clickedLeft();
-        });
-    }
-
-    private void clickedRight() {
-        gameManager.movePlayerRight();
-        updatePlayerPos();
-    }
-
-    private void clickedLeft() {
-        gameManager.movePlayerLeft();
-        updatePlayerPos();
-    }
-
-    private void startGame() {
-        startTime = System.currentTimeMillis();
-        timer = new Timer();
-        timer.scheduleAtFixedRate(
-                new TimerTask() {
-                    @Override
-                    public void run() {
-                        runOnUiThread(new Runnable() {
-                            @Override
-                            public void run() {
-
-                                MainActivity.this.refreshUI();
-                            }
-                        });
-                    }
-                }
-                , DELAY, DELAY);
-    }
-
-    private void refreshUI() {
-        gameManager.setNextState();
-        updatePlayerPos();
-        updateObjPos();
-        updateTrainerPos();
-        Vibrator v = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
-        if(gameManager.checkHit(v)){
-            toast();
-        }
-        gameManager.setHit(false);
-//        if(isLose(v){
-//            OpenScoreScreen();
-//        } else {
-        if (gameManager.getHits() != 0)
-            game_IMG_lives[game_IMG_lives.length - gameManager.getHits()].setVisibility(View.INVISIBLE);
-//        }
-    }
-
-    private void toast() {
-        String name = "Ouch!";
-        Toast
-                .makeText(this, name,Toast.LENGTH_SHORT)
-                .show();
-    }
-
-    private void updateObjPos() {
-        int[][] currentState = gameManager.getCurrentState();
-        int rows = currentState.length, cols = currentState[0].length;
-        for (int i = 0; i < rows - 1; i++) {
-            for (int j = 0; j < cols; j++) {
-                if (currentState[i][j] == GameManager.OBSTACLE_CODE) {
-                    game_IMG_obstacles[i * cols + j].setVisibility(View.VISIBLE);
-                }
-                if (currentState[i][j] == GameManager.EMPTY_CODE) {
-                    game_IMG_obstacles[i * cols + j].setVisibility(View.INVISIBLE);
-                }
-            }
-        }
-    }
-
-    private void updatePlayerPos() {
-        int[][] currentState = gameManager.getCurrentState();
-        int rows = currentState.length, cols = currentState[0].length;
-        for (int i = 0; i < cols; i++) {                            // update player position
-            if (currentState[rows - 1][i] == gameManager.EMPTY_CODE) {
-                game_IMG_players[i].setVisibility(View.INVISIBLE);
-            } else if (currentState[rows - 1][i] == gameManager.PLAYER_CODE) {
-                game_IMG_players[i].setVisibility(View.VISIBLE);
-            }
-        }
-    }
-
-    private void updateTrainerPos(){
-        int[][] currentState = gameManager.getCurrentState();
-        for (int i = 0; i < currentState[0].length; i++) {
-            if(currentState[0][i] == GameManager.OBSTACLE_CODE)
-                game_IMG_trainers[i].setVisibility(View.VISIBLE);
-            else if(currentState[0][i] == GameManager.EMPTY_CODE)
-                game_IMG_trainers[i].setVisibility(View.INVISIBLE);
-        }
-    }
-//    private void OpenScoreScreen() {
-//        Intent scoreIntent = new Intent(this, ScoreActivity.class);
-//        scoreIntent.putExtra(ScoreActivity.KEY_SCORE, score);
-//        scoreIntent.putExtra(ScoreActivity.KEY_STATUS, status);
-//        startActivity(scoreIntent);
-//        finish();
-//    }
 
     private void findViews() {
 
@@ -194,11 +85,126 @@ public class MainActivity extends AppCompatActivity {
                 findViewById(R.id.game_IMG_obstacle14)
         };
 
-        game_LLO_lanes = new View[]{
-                findViewById(R.id.game_LLO_lane0),
-                findViewById(R.id.game_LLO_lane1),
-                findViewById(R.id.game_LLO_lane2)
-        };
-
     }
+
+    private void initViews() {
+        game_FAB_right.setOnClickListener(view -> {
+            clickedRight();
+        });
+        game_FAB_left.setOnClickListener(view -> {
+            clickedLeft();
+        });
+    }
+
+    private void clickedRight() {
+        gameManager.movePlayerRight();
+        updatePlayerPos();
+    }
+
+    private void clickedLeft() {
+        gameManager.movePlayerLeft();
+        updatePlayerPos();
+    }
+
+    private void startGame() {
+        startTime = System.currentTimeMillis();
+        timer = new Timer();
+        timer.scheduleAtFixedRate(
+                new TimerTask() {
+                    @Override
+                    public void run() {
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                MainActivity.this.refreshUI();
+                            }
+                        });
+                    }
+                }
+                , DELAY, DELAY);
+    }
+
+    private void refreshUI() {
+        gameManager.setNextState();
+        updatePlayerPos();
+        updateObjPos();
+        updateTrainerPos();
+        Vibrator v = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
+        if(gameManager.checkHit(v)){
+            toast();
+        }
+        gameManager.setHit(false);
+//        if(isLose(v){
+//            OpenScoreScreen();
+//        } else {
+        if (gameManager.getHits() != 0)
+            game_IMG_lives[game_IMG_lives.length - gameManager.getHits()].setVisibility(View.INVISIBLE);
+//        }
+    }
+
+    private void updateObjPos() {
+        int[][] currentState = gameManager.getCurrentState();
+        int rows = currentState.length, cols = currentState[0].length;
+        for (int i = 0; i < rows - 1; i++) {
+            for (int j = 0; j < cols; j++) {
+                if (currentState[i][j] == GameManager.OBSTACLE_CODE) {
+                    game_IMG_obstacles[i * cols + j].setVisibility(View.VISIBLE);
+                }
+                if (currentState[i][j] == GameManager.EMPTY_CODE) {
+                    game_IMG_obstacles[i * cols + j].setVisibility(View.INVISIBLE);
+                }
+            }
+        }
+    }
+
+    private void updatePlayerPos() {
+        int[][] currentState = gameManager.getCurrentState();
+        int rows = currentState.length, cols = currentState[0].length;
+        for (int i = 0; i < cols; i++) {                            // update player position
+            if (currentState[rows - 1][i] == gameManager.EMPTY_CODE) {
+                game_IMG_players[i].setVisibility(View.INVISIBLE);
+            } else if (currentState[rows - 1][i] == gameManager.PLAYER_CODE) {
+                game_IMG_players[i].setVisibility(View.VISIBLE);
+            }
+        }
+    }
+
+    private void updateTrainerPos(){
+        int[][] currentState = gameManager.getCurrentState();
+        for (int i = 0; i < currentState[0].length; i++) {
+            if(currentState[0][i] == GameManager.OBSTACLE_CODE)
+                game_IMG_trainers[i].setVisibility(View.VISIBLE);
+            else if(currentState[0][i] == GameManager.EMPTY_CODE)
+                game_IMG_trainers[i].setVisibility(View.INVISIBLE);
+        }
+    }
+
+    private void toast() {
+        String name = "Ouch!";
+        Toast
+                .makeText(this, name,Toast.LENGTH_SHORT)
+                .show();
+    }
+
+    @Override
+    protected void onStop() {
+        super.onPause();
+        timer.cancel();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        timer = new Timer();
+    }
+
+    //    private void OpenScoreScreen() {
+//        Intent scoreIntent = new Intent(this, ScoreActivity.class);
+//        scoreIntent.putExtra(ScoreActivity.KEY_SCORE, score);
+//        scoreIntent.putExtra(ScoreActivity.KEY_STATUS, status);
+//        startActivity(scoreIntent);
+//        finish();
+//    }
+
+
 }
