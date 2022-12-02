@@ -35,14 +35,14 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main_activity2dot0);
+        setContentView(R.layout.activity_main);
 
         findViews();
         gameManager = new GameManager(game_IMG_lives.length);
 
         refreshUI();
-        startGame();
         initViews();
+        startGame();
     }
 
     private void findViews() {
@@ -188,6 +188,12 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     protected void onStop() {
+        super.onStop();
+        timer.cancel();
+    }
+
+    @Override
+    protected void onPause() {
         super.onPause();
         timer.cancel();
     }
