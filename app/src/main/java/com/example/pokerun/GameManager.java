@@ -43,13 +43,13 @@ public class GameManager {
                 currentState[i][j] = currentState[i - 1][j];
             }
         }
-        if(currentState[rows - 1][currentPlayerIndex] == OBSTACLE_CODE){
-            hit = true;
+        if(currentState[rows - 1][currentPlayerIndex] == OBSTACLE_CODE){    //obj code overrides
+            setHit(true);                                                   //player code
         }
-        currentState[rows - 1][currentPlayerIndex] = PLAYER_CODE;
+        currentState[rows - 1][currentPlayerIndex] = PLAYER_CODE;           //put player code back
         Arrays.fill(currentState[0], EMPTY_CODE);   // clean first row
-        int rand = r.nextInt(lanes);
         if (obstacleCounter > 0) {
+            int rand = r.nextInt(lanes);
             currentState[0][rand] = OBSTACLE_CODE;
         }
         obstacleCounter--;
@@ -89,8 +89,6 @@ public class GameManager {
     }
 
     public boolean checkHit(Vibrator v) {
-//        for (int i = 0; i < lanes; i++)
-//            if (currentState[rows - 1][i] == PLAYER_CODE && currentState[rows - 1][i] == OBSTACLE_CODE) {
             if(isHit()){
                 if (hits < lives)
                     hits++;
