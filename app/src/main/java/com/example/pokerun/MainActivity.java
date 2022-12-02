@@ -28,7 +28,7 @@ public class MainActivity extends AppCompatActivity {
 
     private Timer timer = new Timer();
 
-    private long startTime = 0;
+    private long startTime;
 
     final int DELAY = 750;
 
@@ -88,12 +88,8 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void initViews() {
-        game_FAB_right.setOnClickListener(view -> {
-            clickedRight();
-        });
-        game_FAB_left.setOnClickListener(view -> {
-            clickedLeft();
-        });
+        game_FAB_right.setOnClickListener(view -> clickedRight());
+        game_FAB_left.setOnClickListener(view -> clickedLeft());
     }
 
     private void clickedRight() {
@@ -113,12 +109,7 @@ public class MainActivity extends AppCompatActivity {
                 new TimerTask() {
                     @Override
                     public void run() {
-                        runOnUiThread(new Runnable() {
-                            @Override
-                            public void run() {
-                                MainActivity.this.refreshUI();
-                            }
-                        });
+                        runOnUiThread(() -> MainActivity.this.refreshUI());
                     }
                 }
                 , DELAY, DELAY);
@@ -161,9 +152,9 @@ public class MainActivity extends AppCompatActivity {
         int[][] currentState = gameManager.getCurrentState();
         int rows = currentState.length, cols = currentState[0].length;
         for (int i = 0; i < cols; i++) {                            // update player position
-            if (currentState[rows - 1][i] == gameManager.EMPTY_CODE) {
+            if (currentState[rows - 1][i] == GameManager.EMPTY_CODE) {
                 game_IMG_players[i].setVisibility(View.INVISIBLE);
-            } else if (currentState[rows - 1][i] == gameManager.PLAYER_CODE) {
+            } else if (currentState[rows - 1][i] == GameManager.PLAYER_CODE) {
                 game_IMG_players[i].setVisibility(View.VISIBLE);
             }
         }
